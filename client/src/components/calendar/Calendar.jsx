@@ -9,10 +9,19 @@ import { Modal, Form, Input, Button } from "antd";
 function UserCalendar() {
   const [selectedDates, setSelectedDates] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [formMode, setFormMode] = useState("create");
   const [eventTitle, setEventTitle] = useState("");
   const [events, setEvents] = useState([
-    { title: "Meeting", start: new Date() },
+    { title: "Meeting", start: new Date(), id: Math.random() },
   ]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const handleEventClick = (info) => {
+    console.log("info", info.event);
+    setSelectedEvent(info.event);
+    setFormMode("edit");
+    toggleModal();
+  };
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -25,12 +34,37 @@ function UserCalendar() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const event = {
-      title: e.target.eventTitle.value,
-      start: selectedDates[0],
-      end: selectedDates[1],
+    setEventTitle("");
+    if (formMode === "create") {
+      handleAddEvent(e);
+    } else if (formMode === "edit") {
+      handleEditEvent(e);
+    } else if (formMode === "delete") {
+      handleDeleteEvent();
+    }
+  };
+
+  const handleDeleteEvent = () => {
+    setEvents(events.filter((event) => event !== selectedEvent));
+    setFormMode("delete");
+    toggleModal();
+  };
+
+  const handleEditEvent = (e) => {
+    e.preventDefault();
+    const newEvent = {
+      title: eventTitle,
+      start: selectedEvent.start,
+      end: selectedEvent.end,
+      id: selectedEvent.id,
     };
-    setEvents([...events, event]);
+    const updatedEvents = [...events];
+    const index = updatedEvents.findIndex(
+      (event) => event.id === selectedEvent.id
+    );
+    updatedEvents[index] = { ...updatedEvents[index], title: eventTitle };
+    setEvents(updatedEvents);
+    toggleModal();
   };
 
   const handleAddEvent = (e) => {
@@ -39,6 +73,7 @@ function UserCalendar() {
       title: eventTitle,
       start: selectedDates[0],
       end: selectedDates[1],
+      id: Math.random(),
     };
     console.log("event", event);
     setEvents([...events, event]);
@@ -53,11 +88,18 @@ function UserCalendar() {
         select={handleSelect}
         unselect={modalVisible ? null : () => setSelectedDates([])}
         events={events}
-        weekends={false}
+        eventClick={handleEventClick}
+        // weekends={false}
         className="calendar-container"
       />
       <Modal
-        title="Add Event"
+        title={
+          formMode === "create"
+            ? "Add Event"
+            : formMode === "edit"
+            ? "Edit Event"
+            : "Delete Event"
+        }
         open={modalVisible}
         onCancel={() => {
           toggleModal();
@@ -80,8 +122,12 @@ function UserCalendar() {
             <Input value={selectedDates[1]} disabled />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" onClick={handleAddEvent}>
-              Add Event
+            <Button type="primary" onClick={handleSubmit} formMode={formMode}>
+              {formMode === "create"
+                ? "Add Event"
+                : formMode === "edit"
+                ? "Save Event"
+                : "Delete Event"}
             </Button>
           </Form.Item>
         </Form>
