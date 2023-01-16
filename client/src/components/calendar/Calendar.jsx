@@ -3,8 +3,9 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import { Layout } from "antd";
 import "./Calendar.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Form, Input, Button } from "antd";
+import { baseUrl } from "../../baseVariables";
 
 function UserCalendar() {
   const [selectedDates, setSelectedDates] = useState([]);
@@ -19,7 +20,10 @@ function UserCalendar() {
   const handleEventClick = (info) => {
     console.log("info", info.event);
     setSelectedEvent(info.event);
-    setFormMode("edit");
+    setEventTitle(info.event.title);
+    setSelectedDates([info.event.startStr, info.event.endStr]);
+    // setFormMode("edit");
+    setFormMode("delete");
     toggleModal();
   };
 
@@ -34,7 +38,6 @@ function UserCalendar() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    setEventTitle("");
     if (formMode === "create") {
       handleAddEvent(e);
     } else if (formMode === "edit") {
@@ -42,6 +45,7 @@ function UserCalendar() {
     } else if (formMode === "delete") {
       handleDeleteEvent();
     }
+    setEventTitle("");
   };
 
   const handleDeleteEvent = () => {
@@ -75,10 +79,34 @@ function UserCalendar() {
       end: selectedDates[1],
       id: Math.random(),
     };
-    console.log("event", event);
     setEvents([...events, event]);
+    fetch(`${baseUrl}/events`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(event),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
     toggleModal();
   };
+
+  const handleFetchEvents = () => {
+    fetch("http://localhost:3000/events")
+      .then((response) => response.json())
+      .then((data) => {
+        setEvents(data.events);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    handleFetchEvents();
+  }, []);
 
   return (
     <Layout>
