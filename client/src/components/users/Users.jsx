@@ -6,6 +6,7 @@ import {
   deleteUser,
   editUser,
   setEditIndex,
+  fetchUsers,
 } from "../../state/usersSlice";
 
 function Users() {
@@ -30,7 +31,8 @@ function Users() {
     form.resetFields();
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = (index, record) => {
+    console.log("record", record);
     dispatch(deleteUser(index));
   };
 
@@ -39,6 +41,10 @@ function Users() {
     form.setFieldsValue(users[index]);
     setVisible(true);
   };
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, []);
 
   const columns = [
     {
@@ -53,7 +59,7 @@ function Users() {
       title: "Actions",
       render: (_, record, index) => (
         <>
-          <Button type="link" onClick={() => handleEdit(index)}>
+          <Button type="link" onClick={() => handleEdit(index, record)}>
             Edit
           </Button>
           <Button type="link" onClick={() => handleDelete(index)}>
