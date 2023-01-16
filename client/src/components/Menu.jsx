@@ -3,21 +3,34 @@ import { Menu } from "antd";
 import Users from "./users/Users";
 import UserCalendar from "./calendar/Calendar";
 
-const AppMenu = () => {
+const AppMenu = ({ setCurrentPage, isLoggedIn, setIsLoggedIn }) => {
   const [selectedMenuItem, setSelectedMenuItem] = useState("users");
+
+  // handle logout
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentPage("login");
+  };
 
   return (
     <>
       <Menu
         mode="horizontal"
-        onClick={({ key }) => setSelectedMenuItem(key)}
+        onClick={({ key }) => {
+          if (key === "logout") {
+            handleLogout();
+          } else {
+            setSelectedMenuItem(key);
+          }
+        }}
         selectedKeys={[selectedMenuItem]}
       >
-        <Menu.Item key="users">Users</Menu.Item>
-        <Menu.Item key="calendar">Calendar</Menu.Item>
+        {isLoggedIn && <Menu.Item key="users">Users</Menu.Item>}
+        {isLoggedIn && <Menu.Item key="calendar">Calendar</Menu.Item>}
+        {isLoggedIn && <Menu.Item key="logout">Logout</Menu.Item>}
       </Menu>
-      {selectedMenuItem === "users" && <Users />}
-      {selectedMenuItem === "calendar" && <UserCalendar />}
+      {isLoggedIn && selectedMenuItem === "users" && <Users />}
+      {isLoggedIn && selectedMenuItem === "calendar" && <UserCalendar />}
     </>
   );
 };
