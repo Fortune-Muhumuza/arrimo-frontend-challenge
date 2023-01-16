@@ -1,8 +1,14 @@
-import { Button, Table } from "antd";
+import { Form, Input, Button, Table } from "antd";
 import { useState } from "react";
 
 function Users() {
   const [users, setUsers] = useState([]);
+
+  const [form] = Form.useForm();
+
+  const onFinish = (values) => {
+    setUsers([...users, values]);
+  };
 
   const columns = [
     {
@@ -26,7 +32,19 @@ function Users() {
 
   return (
     <>
-      <Button type="primary">Add User</Button>
+      <Form form={form} onFinish={onFinish}>
+        <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item label="Email" name="email" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Add User
+          </Button>
+        </Form.Item>
+      </Form>
       <Table dataSource={users} columns={columns} />
     </>
   );
