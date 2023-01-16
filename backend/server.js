@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const eventsController = require("./controllers/events");
+const usersController = require("./controllers/users");
 const { default: mongoose } = require("mongoose");
 const app = express();
 app.use(bodyParser.json());
@@ -22,6 +23,10 @@ app.get("/events", eventsController.getEvents);
 app.post("/events", eventsController.createEvent);
 app.put("/events/:id", eventsController.updateEvent);
 // app.delete("/events/:id", eventsController.deleteEvent);
+app.post("/users", usersController.createUser);
+app.get("/users", usersController.findAllUsers);
+app.put("/users/:id", usersController.updateUser);
+app.delete("/users/:id", usersController.deleteUser);
 
 app.listen(3000, () => {
   console.log("Server started on port 3000");
