@@ -1,30 +1,38 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Form, Input, Button, Table } from "antd";
-import { useState } from "react";
+import {
+  addUser,
+  deleteUser,
+  editUser,
+  setEditIndex,
+} from "../../state/usersSlice";
 
 function Users() {
-  const [users, setUsers] = useState([]);
-  const [editIndex, setEditIndex] = useState(-1);
+  const dispatch = useDispatch();
+  const users = useSelector((state) => state.users.users);
   const [form] = Form.useForm();
+  const [editIndex, setEditIndexState] = useState(-1);
+
+  useEffect(() => {
+    dispatch(setEditIndex(editIndex));
+  }, [dispatch, editIndex]);
 
   const onFinish = (values) => {
     if (editIndex === -1) {
-      setUsers([...users, values]);
+      dispatch(addUser(values));
     } else {
-      const newUsers = [...users];
-      newUsers[editIndex] = values;
-      setUsers(newUsers);
-      setEditIndex(-1);
+      dispatch(editUser({ user: values, index: editIndex }));
+      setEditIndexState(-1);
     }
   };
 
   const handleDelete = (index) => {
-    const newUsers = [...users];
-    newUsers.splice(index, 1);
-    setUsers(newUsers);
+    dispatch(deleteUser(index));
   };
 
   const handleEdit = (index) => {
-    setEditIndex(index);
+    setEditIndexState(index);
     form.setFieldsValue(users[index]);
   };
 
@@ -39,7 +47,7 @@ function Users() {
     },
     {
       title: "Actions",
-      render: (text, record, index) => (
+      render: (_, record, index) => (
         <>
           <Button type="link" onClick={() => handleEdit(index)}>
             Edit
