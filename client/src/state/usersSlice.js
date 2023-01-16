@@ -6,10 +6,22 @@ const initialState = {
   editIndex: -1,
 };
 
+export const fetchUsers = () => async (dispatch) => {
+  try {
+    const response = await axios.get("http://localhost:3000/users");
+    dispatch(setUsers(response.data));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const usersSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
+    setUsers: (state, action) => {
+      state.users = action.payload;
+    },
     addUser: (state, action) => {
       axios
         .post("http://localhost:3000/users", action.payload)
@@ -57,7 +69,7 @@ export const usersSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { addUser, editUser, deleteUser, setEditIndex } =
+export const { addUser, editUser, deleteUser, setEditIndex, setUsers } =
   usersSlice.actions;
 
 export default usersSlice.reducer;
