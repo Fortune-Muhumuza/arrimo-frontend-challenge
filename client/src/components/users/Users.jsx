@@ -3,11 +3,29 @@ import { useState } from "react";
 
 function Users() {
   const [users, setUsers] = useState([]);
-
+  const [editIndex, setEditIndex] = useState(-1);
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
-    setUsers([...users, values]);
+    if (editIndex === -1) {
+      setUsers([...users, values]);
+    } else {
+      const newUsers = [...users];
+      newUsers[editIndex] = values;
+      setUsers(newUsers);
+      setEditIndex(-1);
+    }
+  };
+
+  const handleDelete = (index) => {
+    const newUsers = [...users];
+    newUsers.splice(index, 1);
+    setUsers(newUsers);
+  };
+
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    form.setFieldsValue(users[index]);
   };
 
   const columns = [
@@ -21,10 +39,14 @@ function Users() {
     },
     {
       title: "Actions",
-      render: (text, record) => (
+      render: (text, record, index) => (
         <>
-          <Button type="link">Edit</Button>
-          <Button type="link">Delete</Button>
+          <Button type="link" onClick={() => handleEdit(index)}>
+            Edit
+          </Button>
+          <Button type="link" onClick={() => handleDelete(index)}>
+            Delete
+          </Button>
         </>
       ),
     },
@@ -41,7 +63,7 @@ function Users() {
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Add User
+            {editIndex === -1 ? "Add User" : "Save"}
           </Button>
         </Form.Item>
       </Form>
