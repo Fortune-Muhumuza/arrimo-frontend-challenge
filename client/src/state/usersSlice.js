@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const initialState = {
   users: [],
@@ -10,20 +11,44 @@ export const usersSlice = createSlice({
   initialState,
   reducers: {
     addUser: (state, action) => {
-      state.users = [...state.users, action.payload];
+      axios
+        .post("http://localhost:3000/users", action.payload)
+        .then((response) => {
+          state.users = [...state.users, response.data];
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     editUser: (state, action) => {
-      state.users = state.users.map((user, index) => {
-        if (index === action.payload.index) {
-          return action.payload.user;
-        }
-        return user;
-      });
+      axios
+        .put(
+          `http://localhost:3000/users/${action.payload.user._id}`,
+          action.payload.user
+        )
+        .then((response) => {
+          state.users = state.users.map((user, index) => {
+            if (index === action.payload.index) {
+              return response.data;
+            }
+            return user;
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     deleteUser: (state, action) => {
-      state.users = state.users.filter(
-        (user, index) => index !== action.payload
-      );
+      axios
+        .delete(`http://localhost:3000/users/${action.payload._id}`)
+        .then((response) => {
+          state.users = state.users.filter(
+            (user, index) => index !== action.payload.index
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     setEditIndex: (state, action) => {
       state.editIndex = action.payload;
