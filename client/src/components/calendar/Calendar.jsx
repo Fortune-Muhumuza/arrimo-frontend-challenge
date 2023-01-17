@@ -94,7 +94,7 @@ function UserCalendar() {
   };
 
   const handleFetchEvents = () => {
-    fetch("http://localhost:3000/events")
+    fetch(`${baseUrl}/events`)
       .then((response) => response.json())
       .then((data) => {
         setEvents(data.events);

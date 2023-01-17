@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { baseUrl } from "../baseVariables";
 
 const initialState = {
   users: [],
@@ -8,7 +9,7 @@ const initialState = {
 
 export const fetchUsers = () => async (dispatch) => {
   try {
-    const response = await axios.get("http://localhost:3000/users");
+    const response = await axios.get(`${baseUrl}/users`);
     dispatch(setUsers(response.data));
   } catch (error) {
     console.log(error);
@@ -24,7 +25,7 @@ export const usersSlice = createSlice({
     },
     addUser: (state, action) => {
       axios
-        .post("http://localhost:3000/users", action.payload)
+        .post(`${baseUrl}/users`, action.payload)
         .then((response) => {
           state.users = [...state.users, response.data];
         })
@@ -34,10 +35,7 @@ export const usersSlice = createSlice({
     },
     editUser: (state, action) => {
       axios
-        .put(
-          `http://localhost:3000/users/${action.payload.user._id}`,
-          action.payload.user
-        )
+        .put(`${baseUrl}/users/${action.payload.user._id}`, action.payload.user)
         .then((response) => {
           state.users = state.users.map((user, index) => {
             if (index === action.payload.index) {
@@ -52,7 +50,7 @@ export const usersSlice = createSlice({
     },
     deleteUser: (state, action) => {
       axios
-        .delete(`http://localhost:3000/users/${action.payload._id}`)
+        .delete(`${baseUrl}/users/${action.payload._id}`)
         .then((response) => {
           state.users = state.users.filter(
             (user, index) => index !== action.payload.index
