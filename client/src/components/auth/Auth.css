@@ -2,7 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 30%;
   height: 100%;
+  background: rgb(255, 30, 116);
+  padding: 10px;
+  margin: auto;
 }
 
 .signup-form-actions {

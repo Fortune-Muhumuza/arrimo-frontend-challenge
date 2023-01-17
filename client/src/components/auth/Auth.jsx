@@ -29,6 +29,7 @@ const Login = ({ setIsLoggedIn, setCurrentPage }) => {
             initialValues={{ remember: true }}
             onFinish={onFinish}
           >
+            <h1>Arrimo</h1>
             <Form.Item
               name="username"
               rules={[
@@ -86,6 +87,8 @@ function Signup({ setShowSignup }) {
   return (
     <div className="signup-form-container">
       <Form form={form} onFinish={onFinishSignup}>
+        <h1>Arrimo</h1>
+
         <Form.Item
           label="Username"
           name="username"
