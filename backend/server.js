@@ -28,6 +28,8 @@ app.get("/users", usersController.findAllUsers);
 app.put("/users/:id", usersController.updateUser);
 app.delete("/users/:id", usersController.deleteUser);
 
-app.listen(3000, () => {
-  console.log("Server started on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`server started on port ${PORT}`);
 });
