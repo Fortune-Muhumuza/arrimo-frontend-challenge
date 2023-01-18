@@ -6,20 +6,29 @@ const calendarSlice = createSlice({
     events: [],
   },
   reducers: {
-    addEvent: (state, action) => {
+    addEventReducer: (state, action) => {
       state.events.push(action.payload);
     },
-    editEvent: (state, action) => {
+    editEventReducer: (state, action) => {
       const { index, event } = action.payload;
       state.events[index] = event;
     },
-    deleteEvent: (state, action) => {
+    deleteEventReducer: (state, action) => {
       state.events = state.events.filter(
         (event) => event.id !== action.payload
       );
     },
-    fetchEvents: (state, action) => {
+    fetchEventsReducer: (state, action) => {
       state.events = action.payload;
     },
   },
 });
+
+export const {
+  addEventReducer,
+  editEventReducer,
+  deleteEventReducer,
+  fetchEventsReducer,
+} = calendarSlice.actions;
+
+export default calendarSlice.reducer;
