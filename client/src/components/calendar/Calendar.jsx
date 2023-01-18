@@ -2,20 +2,25 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import { Layout } from "antd";
-import "./Calendar.css";
+import "../styles/Calendar.css";
 import { useEffect, useState } from "react";
 import { Modal, Form, Input, Button } from "antd";
 import { baseUrl } from "../../baseVariables";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addEvent,
+  fetchEvents,
+} from "../../state/actionCreators/calendarActionCreators";
 
 function UserCalendar() {
   const [selectedDates, setSelectedDates] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [formMode, setFormMode] = useState("create");
   const [eventTitle, setEventTitle] = useState("");
-  const [events, setEvents] = useState([
-    { title: "Meeting", start: new Date(), id: Math.random() },
-  ]);
+  const events = useSelector((state) => state.calendar.events);
   const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const dispatch = useDispatch();
 
   const handleEventClick = (info) => {
     console.log("info", info.event);
@@ -80,28 +85,12 @@ function UserCalendar() {
       id: Math.random(),
     };
     setEvents([...events, event]);
-    fetch(`${baseUrl}/events`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(event),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.log(error));
+    dispatch(addEvent(event));
     toggleModal();
   };
 
   const handleFetchEvents = () => {
-    fetch(`${baseUrl}/events`)
-      .then((response) => response.json())
-      .then((data) => {
-        setEvents(data.events);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(fetchEvents());
   };
 
   useEffect(() => {
